@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EL CLUB - Ranking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0f;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        /* Animated background */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(0deg); }
+            100% { transform: perspective(500px) rotateX(2deg); }
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(0, 255, 255, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(128, 0, 255, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(0, 100, 255, 0.04) 0%, transparent 60%);
+            animation: bgPulse 8s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: cyan;
+            border-radius: 50%;
+            box-shadow: 0 0 6px cyan, 0 0 12px cyan;
+            animation: floatParticle linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-decoration {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .header-line {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, cyan);
+        }
+
+        .header-line:last-child {
+            background: linear-gradient(90deg, cyan, transparent);
+        }
+
+        .header-diamond {
+            width: 8px;
+            height: 8px;
+            background: cyan;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px cyan, 0 0 20px rgba(0, 255, 255, 0.5);
+            animation: diamondPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes diamondPulse {
+            0%, 100% { box-shadow: 0 0 10px cyan, 0 0 20px rgba(0, 255, 255, 0.5); }
+            50% { box-shadow: 0 0 20px cyan, 0 0 40px rgba(0, 255, 255, 0.8); }
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 8px;
+            background: linear-gradient(135deg, #00ffff, #00aaff, #8000ff, #00ffff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite;
+            text-shadow: none;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.3));
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 12px;
+            color: rgba(0, 255, 255, 0.6);
+            margin-top: 5px;
+            font-weight: 400;
+        }
+
+        /* Update indicator */
+        .update-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff88;
+            animation: livePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .update-text {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            color: rgba(0, 255, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        /* Ranking list */
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ranking-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.03), rgba(128, 0, 255, 0.02));
+            border: 1px solid rgba(0, 255, 255, 0.08);
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideIn 0.6s ease-out forwards;
+            overflow: hidden;
+        }
+
+        .ranking-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .ranking-item:hover::before {
+            opacity: 1;
+        }
+
+        .ranking-item:hover {
+            border-color: rgba(0, 255, 255, 0.3);
+            transform: translateX(5px) scale(1.01);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.08), inset 0 0 30px rgba(0, 255, 255, 0.03);
+        }
+
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Top 3 special styles */
+        .ranking-item.rank-1 {
+            border-color: rgba(255, 215, 0, 0.3);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.06), rgba(255, 180, 0, 0.02));
+        }
+
+        .ranking-item.rank-1:hover {
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.1), inset 0 0 30px rgba(255, 215, 0, 0.03);
+        }
+
+        .ranking-item.rank-2 {
+            border-color: rgba(192, 192, 192, 0.2);
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.04), rgba(192, 192, 192, 0.01));
+        }
+
+        .ranking-item.rank-2:hover {
+            border-color: rgba(192, 192, 192, 0.4);
+            box-shadow: 0 0 30px rgba(192, 192, 192, 0.08);
+        }
+
+        .ranking-item.rank-3 {
+            border-color: rgba(205, 127, 50, 0.2);
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.04), rgba(205, 127, 50, 0.01));
+        }
+
+        .ranking-item.rank-3:hover {
+            border-color: rgba(205, 127, 50, 0.4);
+            box-shadow: 0 0 30px rgba(205, 127, 50, 0.08);
+        }
+
+        /* Position badge */
+        .position {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            margin-right: 20px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .rank-1 .position {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 180, 0, 0.05));
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+        }
+
+        .rank-2 .position {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.12), rgba(192, 192, 192, 0.04));
+            color: #c0c0c0;
+            border: 1px solid rgba(192, 192, 192, 0.25);
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.6);
+        }
+
+        .rank-3 .position {
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.12), rgba(205, 127, 50, 0.04));
+            color: #cd7f32;
+            border: 1px solid rgba(205, 127, 50, 0.25);
+            text-shadow: 0 0 10px rgba(205, 127, 50, 0.6);
+        }
+
+        .position-default {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.08), rgba(0, 255, 255, 0.02));
+            color: rgba(0, 255, 255, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.12);
+        }
+
+        /* Crown for #1 */
+        .crown {
+            position: absolute;
+            top: -10px;
+            font-size: 14px;
+            animation: crownFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes crownFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* Name & Points */
+        .player-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 0;
+        }
+
+        .player-name-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .player-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .level-emoji {
+            font-size: 0.85rem;
+        }
+
+        .level-name {
+            color: rgba(0, 255, 255, 0.5);
+        }
+
+        .level-1 .level-name { color: rgba(120, 180, 200, 0.7); }
+        .level-2 .level-name { color: rgba(0, 200, 150, 0.8); }
+        .level-3 .level-name { color: rgba(100, 150, 255, 0.8); }
+        .level-4 .level-name { color: rgba(200, 130, 255, 0.8); }
+        .level-5 .level-name { color: rgba(255, 80, 80, 0.9); text-shadow: 0 0 8px rgba(255, 80, 80, 0.4); }
+
+        .rank-1 .player-name {
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .rank-2 .player-name {
+            color: #d4d4d4;
+        }
+
+        .rank-3 .player-name {
+            color: #daa06d;
+        }
+
+        .points-container {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            flex-shrink: 0;
+            margin-left: 20px;
+        }
+
+        .points-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .rank-1 .points-value {
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .points-label {
+            font-size: 0.7rem;
+            color: rgba(0, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .rank-1 .points-label {
+            color: rgba(255, 215, 0, 0.4);
+        }
+
+        /* Points bar */
+        .points-bar-track {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        .points-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.4), rgba(128, 0, 255, 0.4));
+            border-radius: 0 1px 1px 0;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        }
+
+        .rank-1 .points-bar-fill {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.5), rgba(255, 150, 0, 0.3));
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Scan line effect */
+        .ranking-item::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(0, 255, 255, 0.03), transparent);
+            animation: scanLine 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanLine {
+            0% { top: -100%; }
+            100% { top: 200%; }
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(0, 255, 255, 0.1);
+            border-top: 2px solid cyan;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            color: rgba(0, 255, 255, 0.5);
+        }
+
+        /* Error state */
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #ff4444;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 68, 68, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 68, 68, 0.05);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 255, 255, 0.06);
+        }
+
+        .footer-text {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: rgba(0, 255, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        .auto-refresh {
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: rgba(0, 255, 255, 0.15);
+            margin-top: 5px;
+        }
+
+        /* Empty state */
+        .empty-slot {
+            opacity: 0.3 !important;
+        }
+
+        .empty-slot .player-name {
+            color: rgba(255, 255, 255, 0.2);
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .title {
+                font-size: 2rem;
+                letter-spacing: 4px;
+            }
+            .subtitle {
+                font-size: 0.8rem;
+                letter-spacing: 6px;
+            }
+            .ranking-item {
+                padding: 14px 16px;
+            }
+            .position {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                margin-right: 14px;
+            }
+            .player-name {
+                font-size: 1.05rem;
+            }
+            .player-level {
+                font-size: 0.6rem;
+            }
+            .points-value {
+                font-size: 1.2rem;
+            }
+            .container {
+                padding: 30px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-decoration">
+                <div class="header-line"></div>
+                <div class="header-diamond"></div>
+                <div class="header-line"></div>
+            </div>
+            <h1 class="title">EL CLUB</h1>
+            <p class="subtitle">RANKING</p>
+            <div class="header-decoration" style="margin-top: 10px;">
+                <div class="header-line"></div>
+                <div class="header-diamond"></div>
+                <div class="header-line"></div>
+            </div>
+        </header>
+
+        <div class="update-bar">
+            <div class="live-dot"></div>
+            <span class="update-text">EN VIVO</span>
+        </div>
+
+        <div class="ranking-list" id="rankingList">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">CARGANDO DATOS...</div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-text">EL CLUB &mdash; RANKING SYSTEM</div>
+            <div class="auto-refresh">ACTUALIZACIÓN AUTOMÁTICA CADA 60s</div>
+        </footer>
+    </div>
+
+    <script>
+        const SHEET_ID = '1vGVyxqORBkTrR5nZoRSCSsIhTmgz4aKWEEWgckQK1f8';
+        const REFRESH_INTERVAL = 60000; // 60 seconds
+
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (8 + Math.random() * 12) + 's';
+                particle.style.animationDelay = (Math.random() * 10) + 's';
+                particle.style.width = (1 + Math.random() * 2) + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        }
+
+        async function fetchRanking() {
+            try {
+                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+                const response = await fetch(url);
+                const text = await response.text();
+
+                // Parse the JSONP-like response
+                const jsonString = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?/);
+                if (!jsonString) throw new Error('No se pudo leer la hoja de cálculo');
+
+                const data = JSON.parse(jsonString[1]);
+                const rows = data.table.rows;
+
+                // Extract and filter valid entries
+                const entries = [];
+                for (const row of rows) {
+                    const cells = row.c;
+                    if (cells && cells[1] && cells[1].v && cells[2] && cells[2].v != null) {
+                        entries.push({
+                            name: String(cells[1].v).trim(),
+                            points: Number(cells[2].v) || 0
+                        });
+                    }
+                }
+
+                // Sort by points descending
+                entries.sort((a, b) => b.points - a.points);
+
+                return entries;
+            } catch (err) {
+                console.error('Error fetching data:', err);
+                throw err;
+            }
+        }
+
+        function getLevel(points) {
+            if (points >= 350) return { num: 5, name: 'Comandante', emoji: '🎖️' };
+            if (points >= 175) return { num: 4, name: 'Capitán', emoji: '⚔️' };
+            if (points >= 75)  return { num: 3, name: 'Sargento', emoji: '🛡️' };
+            if (points >= 25)  return { num: 2, name: 'Cadete', emoji: '⚡' };
+            return { num: 1, name: 'Recluta', emoji: '🔰' };
+        }
+
+        function renderRanking(entries) {
+            const list = document.getElementById('rankingList');
+            const maxPoints = entries.length > 0 ? entries[0].points : 1;
+
+            if (entries.length === 0) {
+                list.innerHTML = '<div class="error">No hay datos disponibles en el ranking.</div>';
+                return;
+            }
+
+            let html = '';
+            entries.forEach((entry, index) => {
+                const rank = index + 1;
+                const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                const barWidth = (entry.points / maxPoints) * 100;
+                const delay = index * 0.1;
+
+                const level = getLevel(entry.points);
+
+                html += `
+                    <div class="ranking-item ${rankClass}" style="animation-delay: ${delay}s">
+                        <div class="position ${rank > 3 ? 'position-default' : ''}">
+                            ${rank === 1 ? '<span class="crown">&#9813;</span>' : ''}
+                            ${rank}
+                        </div>
+                        <div class="player-info">
+                            <div class="player-name-group">
+                                <span class="player-name">${escapeHtml(entry.name)}</span>
+                                <span class="player-level level-${level.num}">
+                                    <span class="level-emoji">${level.emoji}</span>
+                                    <span class="level-name">Nv.${level.num} ${level.name}</span>
+                                </span>
+                            </div>
+                            <div class="points-container">
+                                <span class="points-value">${entry.points}</span>
+                                <span class="points-label">pts</span>
+                            </div>
+                        </div>
+                        <div class="points-bar-track">
+                            <div class="points-bar-fill" style="width: 0%;" data-width="${barWidth}"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+
+            // Animate bars after render
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    document.querySelectorAll('.points-bar-fill').forEach(bar => {
+                        bar.style.width = bar.dataset.width + '%';
+                    });
+                }, 300);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function loadRanking() {
+            try {
+                const entries = await fetchRanking();
+                renderRanking(entries);
+            } catch (err) {
+                document.getElementById('rankingList').innerHTML =
+                    `<div class="error">Error al cargar el ranking. Verifica que la hoja de cálculo sea pública.<br><br><small>${escapeHtml(err.message)}</small></div>`;
+            }
+        }
+
+        // Init
+        createParticles();
+        loadRanking();
+
+        // Auto-refresh
+        setInterval(loadRanking, REFRESH_INTERVAL);
+    </script>
+</body>
+</html>
